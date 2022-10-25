@@ -1,7 +1,7 @@
 const Joi = require ('joi')//handling validation
-import 'express';
-import express from 'express';
 const app = express()
+
+
 
 app.use(express.json())
 
