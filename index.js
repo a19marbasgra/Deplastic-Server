@@ -5,38 +5,34 @@ const app = express()
 
 app.use(express.json())
 
-
 //change for DB
 const users = [
     { id:1,name:'user1'},
     { id:2,name:'user2'},
     { id:3,name:'user3'}
 ]
+
 //path to the thing
 app.get('/api/user',(req,res)=>{ 
     // the thing in DB
-res.send(users) // 
+    res.send(users) // 
 })
+
 //get a sinlge one
 
 app.get('api/users/:id',(res,req)=>{
-  const users= users.find(c => c.id === parseInt(req.params.id))
-  if(!users) res.status(404).send('User not found')// 404 not found
-  res.send(users)
+  const user= users.find(c => c.id === parseInt(req.params.id))
+  if(!user) return res.status(404).send('User not found')// 404 not found
+  res.send(user)
 
 })
 
 app.post(`/api/users`, (req,res)=>{
-    const schema = {
-        name: Joi.string().min(3).required()
-        }
+  const {error} = validateUser(req.body)
 
-      const result=  Joi.ValidationError(req.body,schema)
-      console.log(result)
-
-      if (result.error){
-        res.status(400).send(result.error.details[0].message)// too much to handle so only get first error
-      }
+  //if (result.error){
+    if (error) return res.status(400).send(result.error.details[0].message)// too much to handle so only get first error
+    
     /*input validation for security (usign joi now)
 
     if(!req.body.name || req.body.name.lenght <3){
@@ -52,46 +48,67 @@ app.post(`/api/users`, (req,res)=>{
     res.send(user)
     */
 })
+
 app.put('/api/users/:id',(req,res)=>{
     //look if this user id exists if not return 404
-    const users= users.find(c => c.id === parseInt(req.params.id))
-  if(!users) res.status(404).send('User not found')// 404 not found
+    const user= users.find(c => c.id === parseInt(req.params.id))
+
+    if(!user) return res.status(404).send('User not found')
+    // 404 not found
+
+ /* if(!user){ 
+    res.status(404).send('User not found')
+    return
+  }// 404 not found */
+
    //validate
 
     //invalid return 400 bad request
+   /* funtion validate user niw
     const schema = {
         name: Joi.string().min(3).required()
         }
 
-      const result=  Joi.ValidationError(req.body,schema)
-      if (result.error){
-        res.status(400).send(result.error.details[0].message)// too much to handle so only get first error
-      }
+      const result=  Joi.ValidationError(req.body,schema)*/
+//const result = validateUser(req.body) //object destructuring or something
+const {error} = validateUser(req.body)
 
-    //updated user
-users.name = req.body.name
+//if (result.error){
+  if (error) return res.status(400).send(result.error.details[0].message)// too much to handle so only get first error
+
+    //update user
+user.name = req.body.name
+
     //return updated user
     res.send(user)
 })
 
-function validateUser(users){
+function validateUser(user){
     const schema = {
         name: Joi.string().min(3).required()
         }
 
     return Joi.validate(user,schema)
-
 }
+
+
+app.delete(`/api/users/:id`,(req,res)=>{
+  // Look up user 
+  //does not exist retun 404
+
+  const user= users.find(c => c.id === parseInt(req.params.id))
+  if(!user) return res.status(404).send('User not found')// 404 not found
+
+  //Delete
+  const index = users.indexOf(user)
+  users.splice(index,1)
+
+  //Return 404
+  res.send(user)
+})
 
 const port = 3000
 
 app.listen(PORT,()=> console.log('lisening port '+ PORT))
-
-
-
-app.post()
-app.put()
-app.delete()
-
 
 //start to test with nodemon
