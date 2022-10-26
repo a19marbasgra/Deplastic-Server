@@ -21,6 +21,13 @@ con.connect(function(err){
 
 app.use(express.json())
 
+const usersRouter = requiere('routes/users')
+//cv paste for the rest 3 more at least 
+
+
+app.use('/users',usersRouter)
+
+
 //change for DB
 const users = [
     { id:1,name:'user1'},
