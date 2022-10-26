@@ -1,5 +1,21 @@
 const Joi = require ('joi')//handling validation
 const app = express()
+const mysql = require ('mysql12')
+
+//connect to DB
+const con = mysql.createConnection({
+host: process.env.DBHost ,
+user: process.env.DBUser,
+password: process.env.DBPassword,
+database: process.env.DB 
+})
+
+con.connect(function(err){
+  if (err)throw error;
+  else{
+    console.log("Connected with DB ")
+  }
+
 
 
 
@@ -112,3 +128,12 @@ const port = 3000
 app.listen(PORT,()=> console.log('lisening port '+ PORT))
 
 //start to test with nodemon
+
+con.end(function(err){
+  if (err){
+    return console.log('error:'+err.message)
+  }
+  console.log("Connection closed with DB")
+})
+
+}) 
