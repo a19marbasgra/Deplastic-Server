@@ -1,6 +1,6 @@
 const Joi = require ('joi')//handling validation
 const app = express()
-const mysql = require ('mysql12')
+const mysql = require ('mysql')
 
 //connect to DB
 const con = mysql.createConnection({
